@@ -1,218 +1,155 @@
 package model;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collections;
+import java.io.File;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Activity {
-	private List<Object> temp = new LinkedList<>();
-	private LinkedList<TrackPoint> list= new LinkedList<>();
-	private String file;
+public class Activity implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private List<TrackPoint> list = new LinkedList<>();
 	private String name;
-	
-	public Activity(String name){
+	private File file;
+	public Activity(File file, String name) {
 		this.file = file;
 		this.name = name;
-		temp = FileReaderDAO.getInstance().createActivity("C:/Users/David/Desktop/OOP/csv/lidingöloppetStockholm/20190928_112002AH.csv");
-		for(int i=0;i<temp.size();i++){
-			list.add((TrackPoint)temp.get(i));
-		}
+		this.list = FileReaderDAO.getInstance().getActivity(this.file);
 	}
 	
-	public double getDist(){
-		String dist = list.get(list.size()-1).getDist();
-		return Double.parseDouble(dist);
+	public double getTotalDist() {
+		TrackPoint tp = list.get(list.size()-1);
+		return tp.getDist();
 	}
 	
-	public double getAverageHRate(){
-		double agr=0.0;
-		for(TrackPoint p : list ){
-			agr+= p.getHRate();
-		}
-		return agr/list.size();
+	public String getStartTime() {
+		TrackPoint tp = list.get(0);
+		return tp.getTime();
 	}
 	
-	public double getMinHRate(){
-		double [] heartRate = new double[list.size()];
-		
-		
-		for (int j = 0; j<list.size();j++){
-			heartRate[j] = list.get(j).getHRate();
-			}
-		double min=heartRate[0];
-		
-		for(int i=0; i<heartRate.length;i++){
-			if(heartRate[i]<min){
-				min =heartRate[i];
-			}
-		}
-		return min;
+	public String getEndTime() {
+		TrackPoint tp = list.get(list.size()-1);
+		return tp.getTime();
 	}
 	
-	public double getMaxHRate(){
-		double [] heartRate = new double[list.size()];
-		double max = heartRate[0];
-		for (int j = 0; j<list.size();j++){
-			heartRate[j] = list.get(j).getHRate();
-			}
-		for (int i= 1;i<heartRate.length;i++){
-			if(heartRate[i]>max){
-				max = heartRate[i];
-			}
+	public double getMaxAlt() {
+		double max = 0.0;
+		for(int i = 1; i < list.size(); i++) {
+			if(list.get(i).getAlt() > list.get(i - 1).getAlt())
+				max = list.get(i).getAlt();
 		}
 		return max;
 	}
 	
-	public void getAllTimes(){
-		String[] times = new String[list.size()];
-		for (int j = 0; j<list.size();j++){
-			times[j] = list.get(j).getTime();
-			System.out.println(times[j]);
+	public double getMinAlt() {
+		double min = list.get(0).getAlt();
+		for(TrackPoint tp : list) {
+			min = (min < tp.getAlt()) ? min : tp.getAlt();
 		}
+		return min;
 	}
 	
-	public double getAverageSpeed(){
-		double agr=0.0;
-		for(TrackPoint p : list ){
-			agr+= Double.parseDouble(p.getSpeed());
+	public double getAvgAlt() {
+		double avgAlt = 0.0;
+		for(TrackPoint tp : list) {
+			avgAlt += tp.getAlt();
 		}
-		return agr/list.size();
+		avgAlt /= list.size();
+		String s = String.format("%.1f", avgAlt).replaceAll(",", ".");
+		return Double.parseDouble(s);
 	}
 	
-	public double getMaxSpeed(){
-		double [] speed = new double[list.size()];
-		double max = speed[0];
-		for (int j = 0; j<list.size();j++){
-			speed[j] = Double.parseDouble(list.get(j).getSpeed());
-			}
-		for (int i= 1;i<speed.length;i++){
-			if(speed[i]>max){
-				max = speed[i];
-			}
+	public double getMaxSpd() {
+		double max = 0.0;
+		for(int i = 1; i < list.size(); i++) {
+			if(list.get(i).getSpeed() > list.get(i - 1).getSpeed())
+				max = list.get(i).getSpeed();
 		}
 		return max;
 	}
 	
-	public double getMinSpeed(){
-		double [] speed= new double[list.size()];
-		
-		
-		for (int j = 0; j<list.size();j++){
-			speed[j] = Double.parseDouble(list.get(j).getSpeed());
-			}
-		double min=speed[0];
-		
-		for(int i=0; i<speed.length;i++){
-			if(speed[i]<min){
-				min =speed[i];
-			}
+	public double getMinSpd() {
+		double min = list.get(0).getSpeed();
+		for(TrackPoint tp : list) {
+			min = (min < tp.getSpeed()) ? min : tp.getSpeed();
 		}
 		return min;
+	}
+	
+	public double getAvgSpd() {
+		double avgSpd = 0.0;
+		for(TrackPoint tp : list) {
+			avgSpd += tp.getSpeed();
+		}
+		avgSpd /= list.size();
+		String s = String.format("%.1f", avgSpd).replaceAll(",", ".");
+		return Double.parseDouble(s);
+	}
+	
+	public double getMaxCad() {
+		double max = 0.0;
+		for(int i = 1; i < list.size(); i++) {
+			if(list.get(i).getCadence() > list.get(i - 1).getCadence())
+				max = list.get(i).getCadence();
+		}
+		return max;
+	}
+	
+	public double getMinCad() {
+		double min = list.get(0).getCadence();
+		for(TrackPoint tp : list) {
+			min = (min < tp.getCadence()) ? min : tp.getCadence();
+		}
+		return min;
+	}
+	
+	public double getAvgCad() {
+		double avgCad = 0.0;
+		for(TrackPoint tp : list) {
+			avgCad += tp.getCadence();
+		}
+		avgCad /= list.size();
+		String s = String.format("%.1f", avgCad).replaceAll(",", ".");
+		return Double.parseDouble(s);
+	}
+	
+	public double getMaxHR() {
+		double max = 0.0;
+		for(int i = 1; i < list.size(); i++) {
+			if(list.get(i).getHRate() > list.get(i - 1).getHRate())
+				max = list.get(i).getHRate();
+		}
+		return max;
+	}
+	
+	public double getMinHR() {
+		double min = list.get(0).getHRate();
+		for(TrackPoint tp : list) {
+			min = (min < tp.getHRate()) ? min : tp.getHRate();
+		}
+		
+		return min;
+	}
+	
+	public double getAvgHR() {
+		double avgHr = 0.0;
+		for(TrackPoint tp : list) {
+			avgHr += tp.getHRate();
+		}
+		avgHr /= list.size();
+		String s = String.format("%.1f", avgHr).replaceAll(",", ".");
+		return Double.parseDouble(s);
+	}
+	
+
+	public String getName() {
+		return this.name;
 	}
 
-	public double getMaxAlt(){
-		double [] alt = new double[list.size()];
-		double max = alt[0];
-		for (int j = 0; j<list.size();j++){
-			alt[j] = Double.parseDouble(list.get(j).getAlt());
-			}
-		for (int i= 1;i<alt.length;i++){
-			if(alt[i]>max){
-				max = alt[i];
-			}
-		}
-		return max;
-	}
-	
-	public double getMinAlt(){
-		double [] alt= new double[list.size()];
-		
-		
-		for (int j = 0; j<list.size();j++){
-			alt[j] = Double.parseDouble(list.get(j).getAlt());
-			}
-		double min=alt[0];
-		
-		for(int i=0; i<alt.length;i++){
-			if(alt[i]<min){
-				min =alt[i];
-			}
-		}
-		return min;
-	}
-	
-	public double getAverageAlt(){
-		double agr=0.0;
-		for(TrackPoint p : list ){
-			agr+= Double.parseDouble(p.getAlt());
-		}
-		return agr/list.size();
-	}
-	
-	public double getMaxCad(){
-		double [] cad = new double[list.size()];
-		double max = cad[0];
-		for (int j = 0; j<list.size();j++){
-			cad[j] = Double.parseDouble(list.get(j).getCadence());
-			}
-		for (int i= 1;i<cad.length;i++){
-			if(cad[i]>max){
-				max = cad[i];
-			}
-		}
-		return max;
-	}
-	
-	public double getMinCad(){
-		double [] cad= new double[list.size()];
-		
-		
-		for (int j = 0; j<list.size();j++){
-			cad[j] = Double.parseDouble(list.get(j).getCadence());
-			}
-		double min=cad[0];
-		
-		for(int i=0; i<cad.length;i++){
-			if(cad[i]<min){
-				min =cad[i];
-			}
-		}
-		return min;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public double getAverageCad(){
-		double agr=0.0;
-		for(TrackPoint p : list ){
-			agr+= Double.parseDouble(p.getCadence());
-		}
-		return agr/list.size();
+	public List<TrackPoint> getTracks(){
+		return this.list;
 	}
-	
-	public String getName(){
-		return name;
-	}
-
-	public LinkedList<TrackPoint> getTrackPoints(){
-		return list;
-		
-	}
-//	public static void main(String[] args) {
-//		Activity a = new Activity("");
-//		TrackPoint p ;
-//		System.out.println(a.getMaxAlt());
-//		System.out.println(a.getMinAlt());
-//		System.out.println(a.getAverageAlt());
-//		System.out.println(a.getMaxSpeed());
-//		System.out.println(a.getMinSpeed());
-//		System.out.println(a.getAverageSpeed());
-//		System.out.println(a.getMaxCad());
-//		System.out.println(a.getMinCad());
-//		System.out.println(a.getAverageCad());
-//		System.out.println(a.getMaxHRate());
-//		System.out.println(a.getMinHRate());
-//		System.out.println(a.getAverageHRate());
-//	
-//   }
 }

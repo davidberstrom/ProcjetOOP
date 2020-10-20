@@ -1,31 +1,43 @@
 package model;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.io.File;
+import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
+public class ActivityManager implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private LinkedList<Activity> list = new LinkedList<>();
+	String name;
+	public ActivityManager() {
+	}
 
-
-public class ActivityManager {
-	private List<Activity> activities = new LinkedList<>();
-
+	public void addActivity(File file, String name) {
+		this.name=name;
+		list.add(new Activity(file,name));
+	}
 	
-	public ActivityManager(){
-		
-	}
-	public void addActivity(String name){
-		activities.add(new Activity(name));
-	}
-	public void removeActivity(String name){
-		for(Activity a : activities){
-			if(name == a.getName()){
-				activities.remove(activities.indexOf(a));
+	public void removeActivity(String name) {
+		for(Activity a : list) {
+			if(a.getName().equalsIgnoreCase(name)) {
+				list.remove(a);
+				a = null;
 			}
 		}
 	}
-	public List<Activity> getAllActivities(){
-		return activities;
+	
+	public Activity getActivity(String name) {
+		for(Activity a : list) {
+			if(a.getName().equalsIgnoreCase(name)) {
+				return a;
+			}
+		}
+		return null;
 	}
 	
+	public LinkedList<Activity> getActivities(){
+		return list;
+	}
+	public String getActivityName(){
+		return name;
+	}
 }

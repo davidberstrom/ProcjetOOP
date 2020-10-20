@@ -1,40 +1,33 @@
-/**
-
- * 
- */
 package model;
 
-import java.util.List;
+import java.io.Serializable;
 
-/**
- *
- *
- */
-public class TrackPoint {
+public class TrackPoint implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String row;
 	private String date;
 	private String time;
-	private String elapsedTime;
-	private String lng;
-	private String lat;
-	private String alt;
-	private String dist;
-	private String hRate;
-	private String speed;
-	private String cadence;
+	private int elapsedTime;
+	private double lng;
+	private double lat;
+	private double alt;
+	private double dist;
+	private double hRate;
+	private double speed;
+	private double cadence;
 	
 	public TrackPoint(String row){
 		this.row = row;
 		this.date = fixRow();
 		this.time = fixRow();
-		this.elapsedTime = fixRow();
-		this.lng = fixRow();
-		this.lat = fixRow();
-		this.alt = fixRow();
-		this.dist = fixRow();
-		this.hRate = fixRow();
-		this.speed = fixRow();
-		this.cadence = fixRow();
+		this.elapsedTime = Integer.parseInt(fixRow());
+		this.lng = Double.parseDouble(fixRow());
+		this.lat = Double.parseDouble(fixRow());
+		this.alt = Double.parseDouble(fixRow());
+		this.dist = Double.parseDouble(fixRow());
+		this.hRate = Double.parseDouble(fixRow());
+		this.speed = Double.parseDouble(fixRow());
+		this.cadence = Double.parseDouble(fixRow());
 	}
 	
 	public String getDate(){
@@ -44,59 +37,47 @@ public class TrackPoint {
 	public String getTime(){
 		return this.time;
 	}
-	public String getElapsedTime(){
+	
+	public int getElapsedTime(){
 		return this.elapsedTime;
 	}
-	public String getLng(){
+	
+	public double getLng(){
 		return this.lng;
 	}
-	public String getLat(){
+	public double getLat(){
 		return this.lat;
 	}
-	public String getAlt(){
+	public double getAlt(){
 		return this.alt;
 	}
-	public String getDist(){
+	public double getDist(){
 		return this.dist;
 	}
 	public double getHRate(){
-		return Double.parseDouble(this.hRate);
+		return this.hRate;
 	}
-	public String getSpeed(){
+	public double getSpeed(){
 		return this.speed;
 	}
-	public String getCadence(){
+	public double getCadence(){
 		return this.cadence;
 	}
 	
 	
 	public String fixRow(){
-		String s = "";
+		String temp = "";
 		for (int i=0; i<this.row.length();i++){
 			if(this.row.charAt(i) != ';' ){
-				s += this.row.charAt(i);
+				temp += this.row.charAt(i);
 			} else {
 				String newRow = this.row.substring(i+1, this.row.length());
 				this.row = newRow;
 				break;
 			}
 		}
-		return s.replaceAll(",", ".");
+		//För att kunna lagra i double krävs . och inte ,
+		temp = temp.replace(",", ".");
+		return temp;
 	}
-	
-	
-	
-//	public static void main(String[] args){
-//		TrackPoint s = new TrackPoint("2016-09-24;11:50:57;54;18,178385;59,359623;27,2;116,8;123,0;9,3;162,0");
-//		System.out.println(s.getDate());
-//		System.out.println(s.getTime());
-//		System.out.println(s.getElapsedTime());
-//		System.out.println(s.getLng());
-//		System.out.println(s.getLat());
-//		System.out.println(s.getAlt());
-//		System.out.println(s.getDist());
-//		System.out.println(s.getHRate());
-//		System.out.println(s.getSpeed());
-//		System.out.println(s.getCadence());
-//	}
 }

@@ -28,13 +28,11 @@ public class PlotView extends JPanel {
 	public PlotView(String title,Activity a,DataFetcher fetcher){
 		
 		data = fetcher;
-		trackPointList = a.getTrackPoints();
+		trackPointList = (LinkedList<TrackPoint>) a.getTracks();
 		System.out.println(trackPointList.size());
 		setBackground(Color.WHITE);
 		setBorder(BorderFactory.createTitledBorder(title));
-		for (TrackPoint p : trackPointList){
-			System.out.println(p.getHRate());
-		}
+		
 	}
 	
 	private void findLimits(){
@@ -42,7 +40,7 @@ public class PlotView extends JPanel {
 			TrackPoint firstTp = trackPointList.getFirst();
 			TrackPoint lastTp = trackPointList.getLast();
 			minDataValue = maxDataValue = data.fetch(firstTp);
-			elapsedTime= Double.parseDouble(lastTp.getElapsedTime());
+			elapsedTime=lastTp.getElapsedTime();
 			
 			for (TrackPoint p : trackPointList){
 				double value = data.fetch(p);
@@ -67,7 +65,7 @@ public class PlotView extends JPanel {
 				TrackPoint tp = tpit.next();
 				for(int i =0; i<width;i++){
 					double time = i*timeStep;
-					while(tpit.hasNext()&&Double.parseDouble(tp.getElapsedTime())<time)
+					while(tpit.hasNext()&&tp.getElapsedTime()<time)
 						tp = tpit.next();
 						double value= data.fetch(tp);
 						value = value-minDataValue;

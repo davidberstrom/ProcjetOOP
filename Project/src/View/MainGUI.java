@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 
 import model.User;
-import model.UserDAO;
+import model.UserManager;
 
    
 
@@ -86,22 +86,21 @@ public class MainGUI extends JFrame {
 		String username = text1.getText();
 		String password = text2.getText();
 
-		UserDAO ud = UserDAO.getInstance();
-		ud.createUser("David", "hej");
-		ud.createUser("axel", "123");
-		ud.storeUsers();
+		
+		UserManager.getInstance().addUser("David", "hej");
+		UserManager.getInstance().addUser("axel", "123");
 		
 		
-		 List<User> allUsers =  ud.getUsers();
+		
+		 List<User> allUsers = UserManager.getInstance().getAllUsers();
 		
 		for(User u : allUsers){
-			System.out.println(u.getPassword());
-			if(u.getPassword().equals(password) && u.getUser().equals(username)){
+			if(u.getPassWord().equals(password) && u.getUserName().equals(username)){
 				JOptionPane.showMessageDialog(this, "login succesful");
-				new LoggedInView();
+				new LoggedInView(u);
 				break;
 			}
-			else if(username !=u.getUser() || u.getPassword() != password){
+			else if(username !=u.getUserName() || u.getPassWord() != password){
 				JOptionPane.showMessageDialog(this, "Wrong username or user dosent exist or worng passeord");
 				
 				break;
@@ -166,15 +165,15 @@ public class MainGUI extends JFrame {
 	
 	public void submit(String name,String password){
 		
-		UserDAO ud = UserDAO.getInstance();
-		List<User> allUsers =  ud.getUsers();
+		
+		List<User> allUsers =  UserManager.getInstance().getAllUsers();
 	
 		for(User u : allUsers){
-			if (u.getUser().equals(name)){
+			if (u.getUserName().equals(name)){
 				JOptionPane.showMessageDialog(this, JOptionPane.ERROR_MESSAGE,"User already exist", EXIT_ON_CLOSE);
 				break;
 			}else{
-				ud.createUser(name, password);
+				UserManager.getInstance().addUser(name, password);
 				System.out.println("has been created");
 				create.dispose();
 				break;
