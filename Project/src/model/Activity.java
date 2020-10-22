@@ -2,6 +2,7 @@ package model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -131,6 +132,7 @@ public class Activity implements Serializable {
 	}
 	
 	public double getAvgHR() {
+
 		double avgHr = 0.0;
 		for(TrackPoint tp : list) {
 			avgHr += tp.getHRate();
@@ -140,6 +142,22 @@ public class Activity implements Serializable {
 		return Double.parseDouble(s);
 	}
 	
+	public List<Double> getLongitude(){
+		List<Double> arrs = new ArrayList<>();
+		for(TrackPoint p :list){
+			arrs.add(p.getLng());
+		}
+		return arrs;
+		
+	}
+	public List<Double> getLatitude(){
+		List<Double> arrs = new ArrayList<>();
+		
+		for(TrackPoint p: list){
+			arrs.add(p.getLat());
+		}
+		return arrs;
+	}
 
 	public String getName() {
 		return this.name;

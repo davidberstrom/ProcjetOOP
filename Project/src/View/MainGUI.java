@@ -86,23 +86,18 @@ public class MainGUI extends JFrame {
 		String username = text1.getText();
 		String password = text2.getText();
 
-		
 		UserManager.getInstance().addUser("David", "hej");
 		UserManager.getInstance().addUser("axel", "123");
-		
-		
 		
 		 List<User> allUsers = UserManager.getInstance().getAllUsers();
 		
 		for(User u : allUsers){
 			if(u.getPassWord().equals(password) && u.getUserName().equals(username)){
-				JOptionPane.showMessageDialog(this, "login succesful");
 				new LoggedInView(u);
 				break;
 			}
 			else if(username !=u.getUserName() || u.getPassWord() != password){
-				JOptionPane.showMessageDialog(this, "Wrong username or user dosent exist or worng passeord");
-				
+				JOptionPane.showMessageDialog(this, "Wrong username or user dosent exist or worng passeord");				
 				break;
 			}
 		}

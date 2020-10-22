@@ -9,7 +9,11 @@ public class User implements Serializable{
 	private String passWord;
 	private int age = 0;
 	private String row;
+	private double wheight=0.0;
+	private double height=0.0;
+	private String description="....";
 	private ActivityManager am = new ActivityManager();
+	
 	public User(String row) {
 		this.row = row;
 		this.userName = fixRow();
@@ -63,7 +67,24 @@ public class User implements Serializable{
 	public ActivityManager getUserAM() {
 		return this.am;
 	}
-	
+	public void setWeight(double wheight){
+		this.wheight = wheight;
+	}
+	public double getWeight(){
+		return wheight;
+	}
+	public void setHeight(double height){
+		this.height=height;
+	}
+	public double getHeight(){
+		return height;
+	}
+	public void setDescription(String d){
+		description = d;
+	}
+	public String getDescription(){
+		return description;
+	}
 	public void printActivityNames() {
 		for(Activity a : am.getActivities())
 			System.out.println(a.getName());
