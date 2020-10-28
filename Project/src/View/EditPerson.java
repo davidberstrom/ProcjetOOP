@@ -18,7 +18,9 @@ import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import controller.Session;
 import model.User;
+import model.UserManager;
 
 public class EditPerson extends JFrame {
 	
@@ -29,18 +31,17 @@ public class EditPerson extends JFrame {
 	private JTextField height;
 	private JTextArea description;
 	private JLabel mainAge,mainWeight,mainHeight,mainDescription;
-	private User u;
 	private JScrollPane scrollable;
-	public EditPerson(User u,JLabel mainAge,JLabel mainWeight,JLabel mainHeight,JLabel mainDescription){
+	
+	public EditPerson(JLabel mainAge,JLabel mainWeight,JLabel mainHeight,JLabel mainDescription){
 		super("edit");
+		this.setLocationRelativeTo(null);
 		this.mainAge=mainAge;
 		this.mainHeight=mainHeight;
 		this.mainWeight=mainWeight;
 		this.mainDescription=mainDescription;
-		this.u=u;
 		setVisible(true);
 		setSize(320,270);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.setBackground(Color.WHITE);
@@ -131,29 +132,30 @@ public class EditPerson extends JFrame {
 		 d = description.getText();
 		
 		if(isNumeric(w) == true){
-			u.setWeight(Double.parseDouble(w));
-			mainWeight.setText("Weight:"+w);
+			Session.getInstance().getUser().setWeight(Double.parseDouble(w));
+			mainWeight.setText("Weight:"+Session.getInstance().getUser().getWeight());
 		}else {
 			
 		}
 		if(isNumeric(h)==true){
-			u.setHeight(Double.parseDouble(h));
-			mainHeight.setText("Height:"+h);
+			Session.getInstance().getUser().setHeight((Double.parseDouble(h)));
+			mainHeight.setText("Height:" +Session.getInstance().getUser().getHeight());
 		}else{
 			
 		}
 		if(isNumeric(a)==true){
-			u.setAge(Integer.parseInt(a));
-			mainAge.setText("Age:"+a);
+			Session.getInstance().getUser().setAge((Integer.parseInt(a)));
+			mainAge.setText("Age:"+ Session.getInstance().getUser().getAge());
 		}else{
 			
 		}
 		if(isNumeric(d)==false){
-			u.setDescription(d);
-			mainDescription.setText("Description:"+d);
+			Session.getInstance().getUser().setDescription((d));
+			mainDescription.setText("Description:"+Session.getInstance().getUser().getDescription());
 		}else{
 		
 		}
+		this.dispose();
 	}
 	
 	

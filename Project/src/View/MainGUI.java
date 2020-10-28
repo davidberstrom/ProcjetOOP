@@ -1,179 +1,121 @@
 package View;
 
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
-import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 
-import model.User;
-import model.UserManager;
+import Observer.Observable;
+import Observer.Observer;
+import controller.Session;
+import model.Activity;
 
-   
 
-public class MainGUI extends JFrame {
-
+public class MainGUI extends JFrame implements Observer{
 	private static final long serialVersionUID = 1L;
-	private JButton login;
-	private JButton createUser;
-	private JPanel panel;
-	private JLabel uName,passw;
-	private JFrame create;
-	final JTextField text1,text2;
+	private JPanel mainPanel,card2;
+	private JPanel centerPanel; 
+	private CardLayout c1 = new CardLayout();
+	final static String MAPPANEL ="Panel with map";
+	final static String ACTIVITYPANEL = "Panel with activity";
+	private JLabel totDist,startTime,stopTime,maxAlt,minAlt,avgAlt,maxHr,minHr,avgHr,
+					maxSpeed,minSpeed,avgSpeed,maxCad,minCad,avgCad;
+	Activity current;
+	public MainGUI() {
+		super("hej");
+		Session.getInstance().addSubscriber(this);
+		
+		mainPanel= new JPanel(new BorderLayout());
+		centerPanel = new JPanel(c1);
+		mainPanel.add(centerPanel,BorderLayout.CENTER);
+		
+		JPanel card1= new JPanel(new BorderLayout());
+		JPanel card1Bottom = new JPanel(new GridLayout(3,5));
+		JPanel card1Center= new JPanel(new GridLayout(3,3));
+	
+		card1.add(card1Bottom,BorderLayout.SOUTH);
+		card1.add(card1Center,BorderLayout.CENTER);
+		
+		card1Center.add(new PlotView("HR",Session.getInstance().getCurrActivity(),tp->tp.getHRate()));
+		card1Center.add(new PlotView("ALT",Session.getInstance().getCurrActivity(),tp->tp.getAlt()));
+		card1Center.add(new PlotView("Speed",Session.getInstance().getCurrActivity(),tp->tp.getSpeed()));
+		
 
-	public MainGUI(){
-		super("Main");
+		
+		
+		//kadens, puls och lutning.•
+		totDist = new JLabel("Total Distance");
+		startTime = new JLabel("Start Time");
+		stopTime = new JLabel("Stop Time");
+		maxAlt = new JLabel("Max altitude");
+		minAlt =new JLabel("Min altitude");
+		avgAlt= new JLabel("Avg altitude");
+		maxHr = new JLabel("Max heartrate");
+		minHr= new JLabel("Min heartrate");
+		avgHr = new JLabel("Avg heartrate");
+		maxSpeed=new JLabel("Max speed");
+		minSpeed= new JLabel("Min speed");
+		avgSpeed = new JLabel("Avg speed");
+		maxCad = new JLabel("Max cadence");
+		minCad = new JLabel("Min cadence");
+		avgCad = new JLabel("Avg cadence");
+		card1Bottom.add(totDist);
+		card1Bottom.add(startTime);
+		card1Bottom.add(stopTime);
+     	card1Bottom.add(maxAlt);
+     	card1Bottom.add(minAlt);
+     	card1Bottom.add(avgAlt);
+     	card1Bottom.add(maxHr);
+     	card1Bottom.add(minHr);
+     	card1Bottom.add(avgHr);
+//     	card1Bottom.add(maxSpeed);
+//     	card1Bottom.add(minSpeed);
+//     	card1Bottom.add(avgSpeed);
+//     	card1Bottom.add(maxCad);
+//     	card1Bottom.add(minCad);
+//     	card1Bottom.add(avgCad);
+		 card2= new JPanel(new BorderLayout());
+
+		
+		card2.add(new DrawMap(Session.getInstance().getCurrActivity()),BorderLayout.CENTER);
+		centerPanel.add(card2,MAPPANEL);
+		centerPanel.add(card1,ACTIVITYPANEL);
+		
+		bottomBar bottomBar = new bottomBar(c1,centerPanel,card1,card1Center);
+		mainPanel.add(bottomBar,BorderLayout.SOUTH);
+		this.add(mainPanel);
 		this.setVisible(true);
+		this.setSize(500,500);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		
-		panel = new JPanel();
-		panel.setLayout(null);
-		panel.setBackground(Color.WHITE);
-		
-		uName = new JLabel();
-		uName.setBounds(10, 20, 80, 25);
-		uName.setText("Username:");
-		
-		text1 = new JTextField(15);
-		text1.setBounds(100,20,165,25); 
-		text1.setBackground(Color.LIGHT_GRAY);
-		
-		passw = new JLabel();
-		passw.setBounds(10,50,80,25);
-		passw.setText("Password:");
-		;
-		text2 = new JPasswordField(15);
-		text2.setBounds(100,50,165,25);  
-		text2.setBackground(Color.LIGHT_GRAY);
-		
-		login=new JButton("LOG IN");
-		login.setBounds(10,80,80,25);
-		login.setBackground(Color.LIGHT_GRAY);
-		
-		createUser = new JButton("CREATE USER");
-		createUser.setBounds(100,80,115,25);
-		createUser.setBackground(Color.LIGHT_GRAY);
-		panel.add(uName);
-		panel.add(text1);
-		panel.add(passw);
-		panel.add(text2);
-		panel.add(login);
-		panel.add(createUser);
-		
-		this.add(panel);
-		this.setSize(300,151);
 		this.setLocationRelativeTo(null);
-		this.setResizable(false);
-	
-		login.addActionListener(e -> onLogIn());
-		createUser.addActionListener(e->createUser());
-		
-		
 	}
-	
-	
-	
-	
-	public void onLogIn(){
-		String username = text1.getText();
-		String password = text2.getText();
 
-		UserManager.getInstance().addUser("David", "hej");
-		UserManager.getInstance().addUser("axel", "123");
-		
-		 List<User> allUsers = UserManager.getInstance().getAllUsers();
-		
-		for(User u : allUsers){
-			if(u.getPassWord().equals(password) && u.getUserName().equals(username)){
-				new LoggedInView(u);
-				break;
-			}
-			else if(username !=u.getUserName() || u.getPassWord() != password){
-				JOptionPane.showMessageDialog(this, "Wrong username or user dosent exist or worng passeord");				
-				break;
-			}
-		}
-		text2.setText("");
-		text1.setText("");
-		this.dispose();
-	
-	}
-	
-	public void createUser(){
-		create = new JFrame();
-		JPanel createPanel = new JPanel();
-		createPanel.setBackground(Color.WHITE);
-		createPanel.setLayout(null);
-		createPanel.setSize(300,151);
-		create.setLocationRelativeTo(null);
-		create.setResizable(false);
-		
-		JLabel chooseName = new JLabel();
-		chooseName.setText("Select Username:");
-		chooseName.setBounds(10, 20, 80, 25);
-		
-		
-		JTextField user = new JTextField(15);
-		user.setBounds(100,20,165,25); 
-		user.setBackground(Color.LIGHT_GRAY);
-	
-		 
-		JLabel selectPass= new JLabel();
-		selectPass.setText("select Password:");
-		selectPass.setBounds(10,50,80,25);
-		selectPass.setBackground(Color.LIGHT_GRAY);
-		
-		JTextField pass = new JPasswordField(15);
-		pass.setBounds(100,50,165,25);  
-		pass.setBackground(Color.LIGHT_GRAY);
-		
-		JButton SUBMIT=new JButton("SUBMIT");
-		SUBMIT.setBounds(10,80,80,25);
-		SUBMIT.setBackground(Color.LIGHT_GRAY);
-		
-		createPanel.add(chooseName);
-		createPanel.add(user);
-		createPanel.add(selectPass);
-		createPanel.add(pass);
-		createPanel.add(SUBMIT);
-		create.add(createPanel);
-		
-		create.setSize(300,151);
-		create.setVisible(true);
-		String name = user.getText();
-		String password = pass.getText();
-		
-		SUBMIT.addActionListener(e->submit(name,password));
-		
-	
-		
-	
-	}
-	
-	public void submit(String name,String password){
-		
-		
-		List<User> allUsers =  UserManager.getInstance().getAllUsers();
-	
-		for(User u : allUsers){
-			if (u.getUserName().equals(name)){
-				JOptionPane.showMessageDialog(this, JOptionPane.ERROR_MESSAGE,"User already exist", EXIT_ON_CLOSE);
-				break;
-			}else{
-				UserManager.getInstance().addUser(name, password);
-				System.out.println("has been created");
-				create.dispose();
-				break;
-			}
-		}
+	@Override
+	public void update() {
+		current=Session.getInstance().getNewActivity();
+		totDist.setText("Total Distance: " + current.getTotalDist());
+		startTime.setText("Start Time: " + current.getStartTime());
+		stopTime.setText("Stop Time: "+ current.getEndTime());
+		maxAlt.setText("Max altitude: "+current.getMaxAlt());
+		minAlt.setText("Min altitude: "+current.getMinAlt());
+		avgAlt.setText("Avg altitude: " + current.getAvgAlt());
+		maxHr.setText("Max heartrate: "+current.getMaxHR());
+		minHr.setText("Min heartrate: "+current.getMinHR());
+		avgHr.setText("Avg heartrate: "+current.getAvgHR());
+		card2.removeAll();
+		card2.add(new DrawMap(current),BorderLayout.CENTER);
+		card2.repaint();
+
 	}
 
 }

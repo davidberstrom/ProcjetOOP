@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import controller.Session;
 import model.Activity;
 import model.DataFetcher;
 import model.TrackPoint;
@@ -24,7 +25,6 @@ public class PlotView extends JPanel {
 	private int[] xPixel;
 	private int[] yPixel;
 	private LinkedList<TrackPoint> trackPointList;
-
 	public PlotView(String title,Activity a,DataFetcher fetcher){
 		
 		data = fetcher;
@@ -84,5 +84,6 @@ public class PlotView extends JPanel {
 		g.setColor(Color.BLUE);
 		g.drawPolyline(xPixel, yPixel, width);
 	}
+
 
 }

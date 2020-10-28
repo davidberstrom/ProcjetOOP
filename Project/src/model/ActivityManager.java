@@ -12,7 +12,6 @@ public class ActivityManager implements Serializable{
 	}
 
 	public void addActivity(File file, String name) {
-		this.name=name;
 		list.add(new Activity(file,name));
 	}
 	
