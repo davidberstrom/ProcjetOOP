@@ -155,6 +155,7 @@ public class EditPerson extends JFrame {
 		}else{
 		
 		}
+		UserManager.getInstance().storeUsers();
 		this.dispose();
 	}
 	

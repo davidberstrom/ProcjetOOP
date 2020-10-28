@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import controller.Session;
+
 public class UserData extends JFrame{
 	private JLabel age,weight,height,description;
 	private JButton edit;
@@ -22,17 +24,17 @@ public class UserData extends JFrame{
 		
 		age = new JLabel();
 		age.setBounds(10, 20, 80, 25);
-		age.setText("age:");
+		age.setText("age: " + Session.getInstance().getUser().getAge());
 		
 		height = new JLabel();
 		height.setBounds(10,50,80,25);
-		height.setText("height:");
+		height.setText("height: " + Session.getInstance().getUser().getHeight());
 		
-		weight = new JLabel("weight");
+		weight = new JLabel("weight: " +Session.getInstance().getUser().getWeight());
 		weight.setBounds(10,80,80,25);
 		weight.setBackground(Color.LIGHT_GRAY);
 		
-		description = new JLabel("Description");
+		description = new JLabel("Description: " +Session.getInstance().getUser().getDescription());
 		description.setBounds(10, 110, 250, 25);
 		
 		edit = new JButton("Edit information");
@@ -46,9 +48,7 @@ public class UserData extends JFrame{
 		
 		edit.addActionListener(e->edit());
 	}
-	public static void main(String[]args){
-		new UserData();
-	}
+
 	public void edit(){
 		new EditPerson(age,weight,height,description);
 	}
