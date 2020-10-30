@@ -1,5 +1,6 @@
 package View;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,18 +31,20 @@ public class DrawMap extends JPanel {
 	private LinkedList<TrackPoint> trackPointList;
 	 public DrawMap(Activity a){
 		 trackPointList = (LinkedList<TrackPoint>)a.getTracks();
-		 this.setSize(600,400);
+		 this.setSize(800,600);
+		 this.setLayout(new BorderLayout());
 		
-		 try{
-			 map = ImageIO.read(new File("C:/Users/David/Desktop/OOP/Kartor/gavle.png"));
-			 rezizedImage = map.getScaledInstance(600,400, Image.SCALE_DEFAULT);
-			 
-		 }catch(IOException e){
-			 System.err.println(e);
-		 }
+//		 try{
+//			 map = ImageIO.read(new File("C:/Users/David/Desktop/OOP/Kartor/gavle.png"));
+//			 rezizedImage = map.getScaledInstance(600,400, Image.SCALE_DEFAULT);
+//			 
+//		 }catch(IOException e){
+//			 System.err.println(e);
+//		 }
 	 }
 	 protected void paintComponent(Graphics g){
 		 super.paintComponent(g);
+		 Graphics2D g2 = (Graphics2D) g;
 		 findMaxMinLongLat();
 		 
 		 int xArr[] = new int[trackPointList.size()];
@@ -52,12 +55,26 @@ public class DrawMap extends JPanel {
 			 yArr[i]= getYPixelValue(p);
 			 i++;
 		 }
-		 g.setColor(Color.BLUE);
-		 //g.drawImage(rezizedImage, 0, 0, null);
-		 g.drawLine(getWidth()/2, 0, getWidth()/2, getHeight());
-		 g.drawLine(0, getHeight()/2, getWidth(), getHeight()/2);
 		 g.drawPolyline(xArr, yArr, xArr.length);
+		 //g.drawImage(rezizedImage, 0, 0, null);
+		 g.setColor(Color.RED);
+//		 for (int j =0; j< getWidth(); j+=10){
+//			 g.drawLine(0+j, 0, 0+j, getHeight());
+//			 g.drawLine(0, 0+j, getWidth(), 0+j);
+//		 }
+//		 
+		 g.drawLine(10, 20, 10, getHeight());
+		 g.drawLine(0, getHeight()-10, getWidth()-20, getHeight()-10);
+		 g.drawString(""+maxLat, 5, 13);
+		 Font font = new Font(null, Font.PLAIN, 10);   
+		 AffineTransform affineTransform = new AffineTransform();
+		 affineTransform.rotate(Math.toRadians(90), 0, 0);
+		 Font rotatedFont = font.deriveFont(affineTransform);
+		 g2.setFont(rotatedFont);
+		 g2.drawString(""+maxLon, getWidth()-16,getHeight()-51);
+		 g.setColor(Color.BLUE);
 		
+		 
 	 }
 	
 	 private int getXPixelValue(TrackPoint tp){

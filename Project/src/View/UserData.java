@@ -5,21 +5,19 @@ import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import controller.Session;
 
 public class UserData extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private JLabel age,weight,height,description;
 	private JButton edit;
 	public UserData(){
 		setSize(350, 220);
 		setVisible(true);
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLayout(null);
 		
 		age = new JLabel();

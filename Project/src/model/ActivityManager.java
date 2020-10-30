@@ -2,6 +2,7 @@ package model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ActivityManager implements Serializable{
@@ -20,8 +21,10 @@ public class ActivityManager implements Serializable{
 			if(a.getName().equalsIgnoreCase(name)) {
 				list.remove(a);
 				a = null;
+				break;
 			}
 		}
+		
 	}
 	
 	public Activity getActivity(String name) {

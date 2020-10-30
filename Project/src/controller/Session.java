@@ -15,7 +15,6 @@ public class Session implements Observable {
 	private User user;
 	private Activity currActivity;
 	private List<Observer> updates= new ArrayList<>();
-	private Activity newActivity;
 	private Session() {
 		
 	}
@@ -37,16 +36,14 @@ public class Session implements Observable {
 	public Activity getCurrActivity() {
 		if(!user.getUserAM().getActivities().isEmpty()) {
 			currActivity = user.getUserAM().getActivities().get(0); 
-			newActivity = user.getUserAM().getActivities().getFirst();
 		}else {
-			currActivity = new Activity(new File("C:/Users/David/Desktop/OOP/csv/vildmarksmilenHemligbyGävle/activity_103378385.csv"), "Springa");
+			return null;
 		}
 		return currActivity;
 	}
 	
 	public void setCurrActivity(Activity a) {
 		this.currActivity = a;
-		newActivity = a;
 		notifySubscribers();
 	}
 
@@ -69,9 +66,5 @@ public class Session implements Observable {
 		}
 		
 	}
-
-	@Override
-	public Activity getNewActivity() {
-		return newActivity;
-	}
+	
 }

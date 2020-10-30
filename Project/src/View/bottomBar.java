@@ -3,7 +3,9 @@ package View;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -19,18 +21,17 @@ import model.UserManager;
 public class bottomBar extends JPanel implements Observer {
 	private static final long serialVersionUID = 1L;
 	private JButton importButton, selectButton, removeButton,showMap,about;
-	private JComboBox<String> list;
-	private JPanel card1,card1Center;
+	private static JComboBox<String> list;
+	private JPanel card1Center;
 	private Activity newAcc;
-	public bottomBar(CardLayout c1, JPanel parent,JPanel card1,JPanel card1Center) {
+	public bottomBar(CardLayout c1, JPanel parent,JPanel card1Center) {
 		Session.getInstance().addSubscriber(this);
-		this.card1=card1;
 		this.card1Center = card1Center;
-		
+		this.setLayout(new GridLayout(1,5));
 		importButton = new JButton("Import activity");
 		selectButton = new JButton("Select activity");
 		removeButton = new JButton("Remove activity");
-		showMap = new JButton ("show activity data");
+		showMap = new JButton ("switch view");
 		about = new JButton("About you");
 		
 		this.add(showMap);
@@ -44,10 +45,14 @@ public class bottomBar extends JPanel implements Observer {
 		removeButton.addActionListener(e -> removeActivity());
 		showMap.addActionListener(e->switchView(c1,parent));
 		about.addActionListener(e->aboutU());
+		
+		
 		list = new JComboBox<String>();
-		for (Activity a : Session.getInstance().getUser().getUserAM().getActivities()) {
-			list.addItem(a.getName());
-		}
+		updateList();
+		
+		   
+		    
+
 	}
 
 	public void importActivity() {
@@ -57,7 +62,9 @@ public class bottomBar extends JPanel implements Observer {
 			file.showOpenDialog(null);
 			Session.getInstance().getUser().getUserAM().addActivity(file.getSelectedFile(),
 					file.getSelectedFile().getName());
+			list.addItem(file.getSelectedFile().getName());
 			getRootPane().repaint();
+			Session.getInstance().setCurrActivity(Session.getInstance().getUser().getUserAM().getActivity(file.getSelectedFile().getName()));
 			UserManager.getInstance().storeUsers();
 		} catch (NullPointerException e) {
 			JOptionPane.showMessageDialog(this.getRootPane(), "You didn't select a file.");
@@ -84,6 +91,8 @@ public class bottomBar extends JPanel implements Observer {
 					String s = (String) list.getSelectedItem();
 					Session.getInstance().getUser().removeActivity(s);
 					list.removeItem(s);
+					card1Center.removeAll();
+					MainGUI.remove();
 				}
 			}
 		} else 
@@ -99,11 +108,18 @@ public class bottomBar extends JPanel implements Observer {
 
 	@Override
 	public void update() {
-		newAcc = Session.getInstance().getNewActivity();
+		newAcc = Session.getInstance().getCurrActivity();
 		card1Center.removeAll();
 		card1Center.add(new PlotView("HR",newAcc,tp->tp.getHRate()));
 		card1Center.add(new PlotView("ALT",newAcc,tp->tp.getAlt()));
 		card1Center.add(new PlotView("Speed",newAcc,tp->tp.getSpeed()));		
 		card1Center.repaint();
+	}
+	
+	public static void updateList(){
+		list.removeAllItems();
+		for (Activity a : Session.getInstance().getUser().getUserAM().getActivities()) {
+			list.addItem(a.getName());
+		}
 	}
 }
